@@ -1,0 +1,86 @@
+= MigrationComments
+
+Comments for your migrations
+
+Tested on:
+
+ActiveRecord 5.x:: using Ruby 2.3.0
+ActiveRecord 4.x:: using Ruby 1.9.3 / 2.0
+ActiveRecord 3.x:: using Ruby 1.8.7 / 1.9.x / 2.0
+ActiveRecord 2.3.x (deprecated):: using Ruby 1.8.6 / 1.8.7
+
+== Why?
+
+Migrations are wonderful.  They handle all your schema changes, and in a pinch they can bring
+any database up to speed.  However, database schemas can change rapidly while a project is
+maturing, and it can be difficult to know (or remember) the purpose for each table and field.
+As such, they deserve to be commented.  These comments should be available for display wherever
+those fields are found.
+
+== Solution!
+
+Using MigrationComments, you can simply add comments during your migrations.  Or if you already
+have existing data structures, just add the comments afterwards in a separate migration.  And of
+course you can always modify and delete these comments in later migrations.
+
+So where are these comments used?  Firstly, they will be included in your <tt>schema.rb</tt> dump which
+is where your IDE (e.g. RubyMine, TextMate) should be learning about your model structure.  This means that
+they'll be available at any point in your project.  Additionally, if you are using the
+'annotate'[https://github.com/ctran/annotate_models] gem, these comments will be added to the annotations
+that are generated within your <tt>_model_.rb</tt> file.
+
+== Examples
+
+To add a comment to an existing structure...
+
+  def self.up
+    set_table_comment :table_name, "A table comment"
+    set_column_comment :table_name, :column_name, "A column comment"
+  end
+
+Or you can use the <tt>change_table</tt> macro...
+
+  def self.up
+    change_table :table_name do |t|
+      t.comment "A table comment"
+      t.change_comment :column_name, "A column comment"
+    end
+  end
+
+Creating a new table?
+
+  def self.up
+    create_table :table_name, :comment => "A table comment" do |t|
+      t.string :column_name, :comment => "A column comment"
+    end
+  end
+
+You can also remove comments...
+
+  def self.up
+    remove_table_comment :table_name
+    remove_column_comment :table_name, :column_name
+  end
+
+Or you can combine these commands while modifying a table...
+
+  def self.up
+    change_table :existing_table do |t|
+      t.comment nil                                       # remove an existing table comment
+      t.string :new_column, :comment => "a new column"    # add a new column with a comment
+      t.change_comment :existing_column, nil              # remove a comment on an existing column
+      t.integer :another_existing_column, :comment => nil # remove a comment on an existing column while modifying the column type
+      t.boolean :column_with_comment                      # modify an existing column without altering the comment
+    end
+  end
+
+
+== Requirements
+
+You must be using a supported DBMS (currently PostgreSQL, MySQL, and SQLite).
+
+If this isn't an option for you, check out the 'schema_comments' gem at https://github.com/akm/schema_comments
+
+== Licensing
+
+See MIT-LICENSE file for details.
