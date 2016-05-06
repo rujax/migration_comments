@@ -1,6 +1,7 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class AddCommentsTest < Minitest::Unit::TestCase
+
   include TestHelper
 
   def test_adding_a_table_comment

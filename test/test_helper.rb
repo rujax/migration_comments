@@ -7,7 +7,7 @@ require 'yaml'
 
 CONFIGURATIONS = YAML::load(IO.read(File.join(File.dirname(__FILE__), 'config/database.yml')))
 
-ENV['DB'] ||= 'postgres' # override as needed
+ENV['DB'] ||= 'postgres' # mysql postgres # override as needed
 
 ActiveRecord::Base.establish_connection(CONFIGURATIONS[ENV['DB']])
 
@@ -16,7 +16,7 @@ require 'migration_comments'
 
 module TestHelper
   def setup
-    ActiveRecord::Schema.define(:version => 1) do
+    ActiveRecord::Schema.define(version: 1) do
       create_table :sample do |t|
         t.string :field1
         t.integer :field2
